@@ -20,36 +20,37 @@
 		canvas.height = 300;
 		canvas.width = 400;
 
-		var context = canvas.getContext('2d');
-		context.fillStyle = '#ff0033';
-
 		var rectH = 240;
 		var rectH2 = 180;
 		var rectW = 50;
+		var plotData = [240, 180, 220, 40];
+		var spacer = (canvas.width - (plotData.length * rectW)) / plotData.length;
 
-		var barH1  = barH2 = 0;
+		var context = canvas.getContext('2d');
+		context.fillStyle = '#ff0033';
 
 		target.appendChild(canvas);
 		context.fillRect(5, (canvas.height - rectH), rectW, rectH);
 		context.fillRect((5 * 2) + rectW, (canvas.height - rectH2), rectW, rectH2);
 
-		document.body.addEventListener('click', function(){
+		var generateZeroArray = function(num){
+			var arry = [];
+			for(var i = 0; i < num; i += 1){
+				arry.push(0);
+			};
 
-			var interval = setInterval(function(){
+			return arry;
+		};
 
-				if(barH1 >= rectH){
-					return clearInterval(interval);
-				}
+		var zeroArray = generateZeroArray(plotData.length);
+		var interval = setInterval(function(){
 
-				barH1 >= rectH ? rectH : barH1 += 1;
-				barH2 >= rectH2 ? rectH2 : barH2 += 1;
-
-				context.clearRect(0, 0, canvas.width, canvas.height);
-				context.fillRect(5, (canvas.height - barH1), rectW, barH1);
-				context.fillRect((5 * 2) + rectW, (canvas.height - barH2), rectW, barH2);
-				console.log('bam');
-			}, 5);
-		});
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			plotData.forEach(function(plot, idx){
+				var newPlot = zeroArray[idx] >= plotData[idx] ? plotData[idx] : zeroArray[idx] += 1;
+				context.fillRect((spacer * idx) + (idx * rectW), (canvas.height - newPlot), rectW, newPlot);
+			});
+		}, 5);
 	</script>
 </body>
 </html>
