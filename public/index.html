@@ -31,28 +31,43 @@
 		context.fillStyle = '#ff0033';
 
 		target.appendChild(canvas);
-		context.fillRect(5, (canvas.height - rectH), rectW, rectH);
-		context.fillRect((5 * 2) + rectW, (canvas.height - rectH2), rectW, rectH2);
 
 		var generateZeroArray = function(num){
 			var arry = [];
 			for(var i = 0; i < num; i += 1){
 				arry.push(0);
 			};
-
 			return arry;
 		};
 
 		var zeroArray = generateZeroArray(plotData.length);
-		var interval = setInterval(function(){
+		var reduceHandler = function(preVal, curVal){
+			return preVal + curVal;
+		};
+
+		var plotTotal, zeroTotal;
+		plotTotal = plotData.reduce(reduceHandler);
+
+		var doChart = function(){
 
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			plotData.forEach(function(plot, idx){
-				var newPlot = zeroArray[idx] >= plotData[idx] ? plotData[idx] : zeroArray[idx] += 1;
+				var newPlot = (zeroArray[idx] >= plotData[idx]) ? plotData[idx] : Math.ceil((plotData[idx] - zeroArray[idx]) / 25);
+				if(plotData[idx] > zeroArray[idx]){
+					zeroArray[idx] += newPlot;
+				} else {
+					zeroArray[idx] = newPlot;
+				}
 				var xpos = idx > 0 ? (spacer * (idx + 1)) + (rectW * idx) : spacer;
-				context.fillRect(xpos, (canvas.height - newPlot), rectW, newPlot);
+				context.fillRect(xpos, (canvas.height - zeroArray[idx]), rectW, zeroArray[idx]);
 			});
-		}, 5);
+
+			if(plotTotal > zeroArray.reduce(reduceHandler)){
+				requestAnimationFrame(doChart);
+			}
+		}
+
+		requestAnimationFrame(doChart);
 	</script>
 </body>
 </html>
