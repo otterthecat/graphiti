@@ -20,11 +20,12 @@
 		canvas.height = 300;
 		canvas.width = 400;
 
+		var plotData = [240, 180, 220, 40];
+
 		var rectH = 240;
 		var rectH2 = 180;
-		var rectW = 50;
-		var plotData = [240, 180, 220, 40];
-		var spacer = (canvas.width - (plotData.length * rectW)) / plotData.length;
+		var rectW = 50 >= canvas.width / plotData.length ? canvas.width / plotData.length : 50;
+		var spacer = (canvas.width - (plotData.length * rectW)) / (plotData.length + 1);
 
 		var context = canvas.getContext('2d');
 		context.fillStyle = '#ff0033';
@@ -48,7 +49,8 @@
 			context.clearRect(0, 0, canvas.width, canvas.height);
 			plotData.forEach(function(plot, idx){
 				var newPlot = zeroArray[idx] >= plotData[idx] ? plotData[idx] : zeroArray[idx] += 1;
-				context.fillRect((spacer * idx) + (idx * rectW), (canvas.height - newPlot), rectW, newPlot);
+				var xpos = idx > 0 ? (spacer * (idx + 1)) + (rectW * idx) : spacer;
+				context.fillRect(xpos, (canvas.height - newPlot), rectW, newPlot);
 			});
 		}, 5);
 	</script>
