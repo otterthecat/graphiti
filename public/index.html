@@ -13,24 +13,20 @@
 <body>
 	<div class="chartbreaker">
 	</div>
-
+	<script src='js/canvas.js'></script>
+	<script src='js/sketch.js'></script>
 	<script>
-		var target = document.querySelector('.chartbreaker');
-		var canvas = document.createElement('canvas');
-		canvas.height = 300;
-		canvas.width = 400;
+		var canvas = new Canvas().insert();
+		var sketch = new Sketch();
 
 		var plotData = [240, 180, 220, 40];
 
 		var rectH = 240;
 		var rectH2 = 180;
-		var rectW = 50 >= canvas.width / plotData.length ? canvas.width / plotData.length : 50;
-		var spacer = (canvas.width - (plotData.length * rectW)) / (plotData.length + 1);
+		var rectW = 50 >= canvas.element.width / plotData.length ? canvas.element.width / plotData.length : 50;
+		var spacer = (canvas.element.width - (plotData.length * rectW)) / (plotData.length + 1);
 
-		var context = canvas.getContext('2d');
-		context.fillStyle = '#ff0033';
-
-		target.appendChild(canvas);
+		canvas.context.fillStyle = '#ff0033';
 
 		var generateZeroArray = function(num){
 			var arry = [];
@@ -50,7 +46,7 @@
 
 		var doChart = function(){
 
-			context.clearRect(0, 0, canvas.width, canvas.height);
+			sketch.use(canvas).clear();
 			plotData.forEach(function(plot, idx){
 				var newPlot = (zeroArray[idx] >= plotData[idx]) ? plotData[idx] : Math.ceil((plotData[idx] - zeroArray[idx]) / 25);
 				if(plotData[idx] > zeroArray[idx]){
@@ -59,7 +55,7 @@
 					zeroArray[idx] = newPlot;
 				}
 				var xpos = idx > 0 ? (spacer * (idx + 1)) + (rectW * idx) : spacer;
-				context.fillRect(xpos, (canvas.height - zeroArray[idx]), rectW, zeroArray[idx]);
+				sketch.draw('shape')('rectangle')(xpos, (canvas.element.height - zeroArray[idx]), rectW, zeroArray[idx]);
 			});
 
 			if(plotTotal > zeroArray.reduce(reduceHandler)){
