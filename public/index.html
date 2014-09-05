@@ -21,12 +21,8 @@
 
 		var plotData = [240, 180, 220, 40];
 
-		var rectH = 240;
-		var rectH2 = 180;
 		var rectW = 50 >= canvas.element.width / plotData.length ? canvas.element.width / plotData.length : 50;
 		var spacer = (canvas.element.width - (plotData.length * rectW)) / (plotData.length + 1);
-
-		canvas.context.fillStyle = '#ff0033';
 
 		var generateZeroArray = function(num){
 			var arry = [];
