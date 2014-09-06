@@ -29,3 +29,5 @@ Canvas.prototype = {
 		return canvasObj;
 	}
 };
+
+module.exports = Canvas;

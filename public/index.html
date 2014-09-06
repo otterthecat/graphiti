@@ -13,53 +13,6 @@
 <body>
 	<div class="chartbreaker">
 	</div>
-	<script src='js/canvas.js'></script>
-	<script src='js/sketch.js'></script>
-	<script>
-		var canvas = new Canvas().insert();
-		var sketch = new Sketch();
-
-		var plotData = [240, 180, 220, 40];
-
-		var rectW = 50 >= canvas.element.width / plotData.length ? canvas.element.width / plotData.length : 50;
-		var spacer = (canvas.element.width - (plotData.length * rectW)) / (plotData.length + 1);
-
-		var generateZeroArray = function(num){
-			var arry = [];
-			for(var i = 0; i < num; i += 1){
-				arry.push(0);
-			};
-			return arry;
-		};
-
-		var zeroArray = generateZeroArray(plotData.length);
-		var reduceHandler = function(preVal, curVal){
-			return preVal + curVal;
-		};
-
-		var plotTotal, zeroTotal;
-		plotTotal = plotData.reduce(reduceHandler);
-
-		var doChart = function(){
-
-			sketch.use(canvas).clear();
-			plotData.forEach(function(plot, idx){
-				var newPlot = (zeroArray[idx] >= plotData[idx]) ? plotData[idx] : Math.ceil((plotData[idx] - zeroArray[idx]) / 25);
-				if(plotData[idx] > zeroArray[idx]){
-					zeroArray[idx] += newPlot;
-				} else {
-					zeroArray[idx] = newPlot;
-				}
-				var xpos = idx > 0 ? (spacer * (idx + 1)) + (rectW * idx) : spacer;
-				sketch.draw('shape')('rectangle')(xpos, (canvas.element.height - zeroArray[idx]), rectW, zeroArray[idx]);
-			});
-
-			if(plotTotal > zeroArray.reduce(reduceHandler)){
-				requestAnimationFrame(doChart);
-			}
-		}
-
-		requestAnimationFrame(doChart);
-	</script>
+	<script src='js/dist/index.js'></script>
 </body>
 </html>

@@ -32,3 +32,5 @@ Sketch.prototype = {
 		return this;
 	}
 };
+
+module.exports = Sketch;
