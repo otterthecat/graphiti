@@ -1,14 +1,16 @@
 var Canvas = require('./canvas');
 var Sketch = require('./sketch');
 var Animator = require('./animator');
+var Chart = require('./chart');
 
 var canvas = new Canvas().insert();
 var sketch = new Sketch();
-
-var plotData = [240, 180, 220, 40];
-
-var rectW = 50 >= canvas.element.width / plotData.length ? canvas.element.width / plotData.length : 50;
-var spacer = (canvas.element.width - (plotData.length * rectW)) / (plotData.length + 1);
+var chart = new Chart();
+chart.use({
+	canvas: canvas,
+	data: [240, 180, 220, 40],
+	maxWidth: 50
+});
 
 var generateAnimatorArray = function(data){
 	var aniArray = [];
@@ -22,23 +24,16 @@ var generateAnimatorArray = function(data){
 	return aniArray;
 }
 
-var animatiorArray = generateAnimatorArray(plotData);
-
-var reduceHandler = function(preVal, curVal){
-	return preVal + curVal;
-};
-
+var animatiorArray = generateAnimatorArray(chart.data);
 var doChart = function(){
 
 	sketch.use(canvas).clear();
-	plotData.forEach(function(plot, idx){
-		var xpos = idx > 0 ? (spacer * (idx + 1)) + (rectW * idx) : spacer;
-		var newPos = animatiorArray[idx].increase();
-		sketch.draw('shape')('rectangle')(xpos, (canvas.element.height - newPos), rectW, newPos);
+	chart.data.forEach(function(plot, idx){
+		var xpos = idx > 0 ? (chart.calculateSpacing() * (idx + 1)) + (chart.calculateWidth() * idx) : chart.calculateSpacing();
+		sketch.draw('shape')('rectangle')(xpos, (canvas.element.height - animatiorArray[idx].increase()), chart.calculateWidth(), animatiorArray[idx].increase());
 	});
 
 	requestAnimationFrame(doChart);
-
 }
 
-requestAnimationFrame(doChart);
+chart.animate(doChart);
