@@ -7,7 +7,9 @@ var Chart = function(){
 	this.context = null;
 	this.data = null;
 	this.maxWidth = 100;
+	this.maxHeight = 100;
 	this.type = null;
+	this.layout = 'width';
 };
 
 Chart.prototype = {
@@ -20,12 +22,13 @@ Chart.prototype = {
 		return this;
 	},
 
-	calculateWidth: function(){
-		return this.maxWidth >= this.canvas.width / this.data.length ? this.canvas.width / this.data.length : this.maxWidth;
+	calculate: function(prop){
+		var label = 'max' + prop.charAt(0).toUpperCase() + prop.slice(1);
+		return this[label] >= this.canvas[prop] / this.data.length ? this.canvas[prop] / this.data.length : this[label];
 	},
 
-	calculateSpacing: function(){
-		return (this.canvas.width - (this.data.length * this.calculateWidth())) / (this.data.length + 1);
+	calculateSpacing: function(prop){
+		return Math.floor((this.canvas[prop] - (this.data.length * this.calculate(this.layout))) / (this.data.length + 1));
 	},
 
 	animate:function(fn){
@@ -46,26 +49,42 @@ Chart.prototype = {
 		return aniArray;
 	},
 
+	getPosition: function(index){
+		index = index || 0;
+		return index > 0 ? (this.calculateSpacing(this.layout) * (index + 1)) + (this.calculate(this.layout) * index) : this.calculateSpacing(this.layout);
+	},
+
+	iterator:  function(plot, index){
+		var xpos = this.layout === 'width' ? this.getPosition(index) : (this.canvas.width - this.animatorArray[index].increase());
+		var ypos = this.layout === 'width' ? (this.canvas.height - this.animatorArray[index].increase()) : this.getPosition(index);
+		var width = this.layout === 'width' ? this.calculate(this.layout) : this.animatorArray[index].increase();
+		var height = this.layout === 'width' ? this.animatorArray[index].increase() : this.calculate(this.layout);
+		sketch.draw('shape')('rectangle')(xpos, ypos, width, height);
+	},
+
 	defaults: {
 		horizontal: function(){
-
-			var animatorArray = this.generateAnimatorArray();
+			this.layout = 'width';
+			this.animatorArray = this.generateAnimatorArray();
 			var self = this;
 			var hChart = function(){
 				sketch.use({element: self.canvas, context: self.context}).clear();
-				self.data.forEach(function(plot, idx){
-					var xpos = idx > 0 ? (self.calculateSpacing() * (idx + 1)) + (self.calculateWidth() * idx) : self.calculateSpacing();
-
-					sketch.draw('shape')('rectangle')(xpos, (self.canvas.height - animatorArray[idx].increase()), self.calculateWidth(), animatorArray[idx].increase());
-				});
-
+				self.data.forEach(self.iterator.bind(self));
 				requestAnimationFrame(hChart);
 			};
 			return hChart;
 		},
 
 		vertical: function(){
-
+			this.layout = 'height';
+			this.animatorArray = this.generateAnimatorArray();
+			var self = this;
+			var vChart = function(){
+				sketch.use({element: self.canvas, context: self.context}).clear();
+				self.data.forEach(self.iterator.bind(self));
+				requestAnimationFrame(vChart);
+			};
+			return vChart;
 		}
 	}
 };
