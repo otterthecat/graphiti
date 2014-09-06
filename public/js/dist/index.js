@@ -74,13 +74,17 @@ Canvas.prototype = {
 module.exports = Canvas;
 
 },{}],3:[function(require,module,exports){
+var Animator = require('./animator');
+var Sketch = require('./sketch');
+var sketch = new Sketch();
+
 var Chart = function(){
 	this.canvas = null;
 	this.context = null;
 	this.data = null;
 	this.maxWidth = 100;
+	this.type = null;
 };
-
 
 Chart.prototype = {
 
@@ -101,21 +105,54 @@ Chart.prototype = {
 	},
 
 	animate:function(fn){
-		requestAnimationFrame(fn);
+		var callback = this.defaults[fn].call(this) || fn
+		requestAnimationFrame(callback);
 		return this;
+	},
+
+	generateAnimatorArray: function(){
+		var aniArray = [];
+		for(var i = 0; i < this.data.length; i += 1){
+			var val = this.data[i]
+			var animator = new Animator();
+			animator.animate({end: val});
+			aniArray.push(animator);
+		}
+
+		return aniArray;
+	},
+
+	defaults: {
+		horizontal: function(){
+
+			var animatorArray = this.generateAnimatorArray();
+			var self = this;
+			var hChart = function(){
+				sketch.use({element: self.canvas, context: self.context}).clear();
+				self.data.forEach(function(plot, idx){
+					var xpos = idx > 0 ? (self.calculateSpacing() * (idx + 1)) + (self.calculateWidth() * idx) : self.calculateSpacing();
+
+					sketch.draw('shape')('rectangle')(xpos, (self.canvas.height - animatorArray[idx].increase()), self.calculateWidth(), animatorArray[idx].increase());
+				});
+
+				requestAnimationFrame(hChart);
+			};
+			return hChart;
+		},
+
+		vertical: function(){
+
+		}
 	}
 };
 
 module.exports = Chart;
 
-},{}],4:[function(require,module,exports){
+},{"./animator":1,"./sketch":5}],4:[function(require,module,exports){
 var Canvas = require('./canvas');
-var Sketch = require('./sketch');
-var Animator = require('./animator');
 var Chart = require('./chart');
 
 var canvas = new Canvas().insert();
-var sketch = new Sketch();
 var chart = new Chart();
 chart.use({
 	canvas: canvas,
@@ -123,33 +160,9 @@ chart.use({
 	maxWidth: 50
 });
 
-var generateAnimatorArray = function(data){
-	var aniArray = [];
-	for(var i = 0; i < data.length; i += 1){
-		var val = data[i]
-		var animator = new Animator();
-		animator.animate({end: val});
-		aniArray.push(animator);
-	}
+chart.animate('horizontal');
 
-	return aniArray;
-}
-
-var animatiorArray = generateAnimatorArray(chart.data);
-var doChart = function(){
-
-	sketch.use(canvas).clear();
-	chart.data.forEach(function(plot, idx){
-		var xpos = idx > 0 ? (chart.calculateSpacing() * (idx + 1)) + (chart.calculateWidth() * idx) : chart.calculateSpacing();
-		sketch.draw('shape')('rectangle')(xpos, (canvas.element.height - animatiorArray[idx].increase()), chart.calculateWidth(), animatiorArray[idx].increase());
-	});
-
-	requestAnimationFrame(doChart);
-}
-
-chart.animate(doChart);
-
-},{"./animator":1,"./canvas":2,"./chart":3,"./sketch":5}],5:[function(require,module,exports){
+},{"./canvas":2,"./chart":3}],5:[function(require,module,exports){
 var Sketch = function(){
 
 	this.canvas = null;
