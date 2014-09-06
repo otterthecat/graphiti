@@ -131,7 +131,7 @@ Chart.prototype = {
 	},
 
 	iterator:  function(plot, index){
-		var xpos = this.layout === 'width' ? this.getPosition(index) : (this.canvas.width - this.animatorArray[index].increase());
+		var xpos = this.layout === 'width' ? this.getPosition(index) : 0;
 		var ypos = this.layout === 'width' ? (this.canvas.height - this.animatorArray[index].increase()) : this.getPosition(index);
 		var width = this.layout === 'width' ? this.calculate(this.layout) : this.animatorArray[index].increase();
 		var height = this.layout === 'width' ? this.animatorArray[index].increase() : this.calculate(this.layout);
