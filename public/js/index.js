@@ -9,4 +9,4 @@ chart.use({
 	maxWidth: 50
 });
 
-chart.animate('vertical');
+chart.animate('horizontal');

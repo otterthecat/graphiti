@@ -180,7 +180,7 @@ chart.use({
 	maxWidth: 50
 });
 
-chart.animate('vertical');
+chart.animate('horizontal');
 
 },{"./canvas":2,"./chart":3}],5:[function(require,module,exports){
 var Sketch = function(){
