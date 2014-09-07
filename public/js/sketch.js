@@ -14,6 +14,14 @@ var shapes = {
 	rectangle: function(x, y, w, h){
 		this.canvas.context.fillRect(x, y, w, h);
 		return this;
+	},
+	text: function(txt, x, y){
+		this.canvas.context.fillStyle = '#333';
+		this.canvas.context.font = '12px sans-serif';
+		this.canvas.context.textBaseline = 'top';
+		this.canvas.context.textAlign = 'center';
+		this.canvas.context.fillText(txt, x, y);
+		return this;
 	}
 }
 

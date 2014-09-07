@@ -136,6 +136,7 @@ Chart.prototype = {
 		var width = this.layout === 'width' ? this.calculate(this.layout) : this.animatorArray[index].increase();
 		var height = this.layout === 'width' ? this.animatorArray[index].increase() : this.calculate(this.layout);
 		sketch.draw('shape')('rectangle')(xpos, ypos, width, height);
+		sketch.draw('shape')('text')(plot, xpos + (width/2), ypos + (height/2));
 	},
 
 	defaults: {
@@ -179,7 +180,7 @@ chart.use({
 	maxWidth: 50
 });
 
-chart.animate('horizontal');
+chart.animate('vertical');
 
 },{"./canvas":2,"./chart":3}],5:[function(require,module,exports){
 var Sketch = function(){
@@ -197,6 +198,14 @@ var methods = {
 var shapes = {
 	rectangle: function(x, y, w, h){
 		this.canvas.context.fillRect(x, y, w, h);
+		return this;
+	},
+	text: function(txt, x, y){
+		this.canvas.context.fillStyle = '#333';
+		this.canvas.context.font = '12px sans-serif';
+		this.canvas.context.textBaseline = 'top';
+		this.canvas.context.textAlign = 'center';
+		this.canvas.context.fillText(txt, x, y);
 		return this;
 	}
 }

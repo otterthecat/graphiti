@@ -60,6 +60,7 @@ Chart.prototype = {
 		var width = this.layout === 'width' ? this.calculate(this.layout) : this.animatorArray[index].increase();
 		var height = this.layout === 'width' ? this.animatorArray[index].increase() : this.calculate(this.layout);
 		sketch.draw('shape')('rectangle')(xpos, ypos, width, height);
+		sketch.draw('shape')('text')(plot, xpos + (width/2), ypos + (height/2));
 	},
 
 	defaults: {
