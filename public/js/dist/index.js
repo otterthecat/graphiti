@@ -200,6 +200,22 @@ var shapes = {
 		this.canvas.context.fillRect(x, y, w, h);
 		return this;
 	},
+	circle: function(centerX, centerY, radius){
+		this.canvas.context.beginPath();
+		this.canvas.context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+		this.canvas.context.fillStyle = '#ff0033';
+		this.canvas.context.fill();
+		return this;
+	},
+	triangle: function(start, middle, end){
+		this.canvas.context.beginPath();
+		this.canvas.context.moveTo(start.x, start.y);
+		this.canvas.context.lineTo(middle.x, middle.y);
+		this.canvas.context.lineTo(end.x, end.y);
+		this.canvas.context.fillStyle = '#ff0033';
+		this.canvas.context.fill();
+		return this;
+	},
 	text: function(txt, x, y){
 		this.canvas.context.fillStyle = '#333';
 		this.canvas.context.font = '12px sans-serif';
