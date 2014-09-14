@@ -1,5 +1,5 @@
-# Chartbreaker
-Breaking lonelies, one chart at a time
+# Graphiti
+Canvas graphs
 
 ## WTF?
 This is just a playground to get familiar with the canvas API.
