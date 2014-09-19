@@ -1,10 +1,10 @@
 {
-	"name": "chartbreaker",
-	"title": "chartbreaker",
+	"name": "graphiti",
+	"title": "graphiti",
 	"description": "I made this",
 	"version": "0.1.0",
 	"private": true,
-	"homepage": "git@github.com:otterthecat/chartbreaker.git",
+	"homepage": "git@github.com:otterthecat/graphiti.git",
 	"author": {
 		"name": "Otter the Cat",
 		"email": "otc@otterthecat.com"
@@ -14,7 +14,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/otterthecat/chartbreaker.git"
+		"url": "https://github.com/otterthecat/graphiti.git"
+	},
+	"dependencies": {
+		"vandal": "*"
 	},
 	"devDependencies": {
 		"browserify": "^5.11.1",

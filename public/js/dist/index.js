@@ -1,4 +1,115 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = require('./lib/vandal');
+
+},{"./lib/vandal":2}],2:[function(require,module,exports){
+var Vandal = function () {
+	'use strict';
+
+	this.canvas = null;
+	this.pallete = {
+		fillStyle :  '#ff0033',
+		font : '12px sans-serif',
+		textBaseline : 'top',
+		textAlign : 'center'
+	};
+};
+
+var shapes = {
+	rectangle : function (x, y, w, h) {
+		'use strict';
+
+		this.canvas.context.fillRect(x, y, w, h);
+		return this;
+	},
+	circle : function (centerX, centerY, radius) {
+		'use strict';
+
+		this.canvas.context.beginPath();
+		this.canvas.context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+		this.canvas.context.fill();
+		return this;
+	},
+	triangle : function () {
+		'use strict';
+
+		this.canvas.context.beginPath();
+		this.canvas.context.moveTo(arguments[0].x, arguments[0].y);
+		this.canvas.context.lineTo(arguments[1].x, arguments[1].y);
+		this.canvas.context.lineTo(arguments[2].x, arguments[2].y);
+		this.canvas.context.fill();
+		return this;
+	},
+	line : function () {
+		'use strict';
+
+		this.canvas.context.beginPath();
+		this.canvas.context.moveTo(arguments[0].x, arguments[0].y);
+		for(var i = 1; i < arguments.length; i += 1) {
+			this.canvas.context.lineTo(arguments[i].x, arguments[i].y);
+		}
+		this.canvas.context.stroke();
+		return this;
+	},
+	text : function (txt, x, y) {
+		'use strict';
+
+		this.canvas.context.fillText(txt, x, y);
+		return this;
+	}
+};
+
+var methods = {
+	shape : function (type) {
+		'use strict';
+		return this.shapes[type].bind(this);
+	},
+	pallete : function (obj) {
+		'use strict';
+
+		for(var item in obj) {
+			if(this.pallete.hasOwnProperty(item)) {
+				this.canvas.context[item] = obj[item];
+			}
+		}
+
+		return this.draw.bind(this);
+	}
+};
+
+Vandal.prototype = {
+	shapes : shapes,
+
+	methods : methods,
+
+	use : function (canvas) {
+		'use strict';
+
+		this.canvas = {
+			width : canvas.width,
+			height : canvas.height,
+			context : canvas.getContext('2d'),
+			element : canvas
+		};
+		return this;
+	},
+
+	draw : function (type) {
+		'use strict';
+		return this.methods[type].bind(this);
+	},
+
+	clear : function () {
+		'use strict';
+
+		this.canvas.context
+			.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		return this;
+	}
+};
+
+module.exports = Vandal;
+
+},{}],3:[function(require,module,exports){
 var Animator = function(){
 	this.current = 0;
 	this.max = 100;
@@ -38,7 +149,7 @@ Animator.prototype = {
 
 module.exports = Animator;
 
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var Canvas = function(){
 	this.attributes = {
 		targetEl: '.chartbreaker',
@@ -73,10 +184,10 @@ Canvas.prototype = {
 
 module.exports = Canvas;
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var Animator = require('./animator');
-var Sketch = require('./sketch');
-var sketch = new Sketch();
+var Vandal = require('vandal');
+var vandal = new Vandal();
 
 var Chart = function(){
 	this.canvas = null;
@@ -135,8 +246,8 @@ Chart.prototype = {
 		var ypos = this.layout === 'width' ? (this.canvas.height - this.animatorArray[index].increase()) : this.getPosition(index);
 		var width = this.layout === 'width' ? this.calculate(this.layout) : this.animatorArray[index].increase();
 		var height = this.layout === 'width' ? this.animatorArray[index].increase() : this.calculate(this.layout);
-		sketch.draw('shape')('rectangle')(xpos, ypos, width, height);
-		sketch.draw('shape')('text')(plot, xpos + (width/2), ypos + (height/2));
+		vandal.draw('pallete')({fillStyle: '#ff0033'})('shape')('rectangle')(xpos, ypos, width, height)
+			.draw('pallete')({fillStyle: '#333', textAlign: 'center', textBaseline: 'top'})('shape')('text')(plot, xpos + (width/2), ypos + (height/2));
 	},
 
 	defaults: {
@@ -145,7 +256,7 @@ Chart.prototype = {
 			this.animatorArray = this.generateAnimatorArray();
 			var self = this;
 			var hChart = function(){
-				sketch.use({element: self.canvas, context: self.context}).clear();
+				vandal.use(self.canvas).clear();
 				self.data.forEach(self.iterator.bind(self));
 				requestAnimationFrame(hChart);
 			};
@@ -157,7 +268,7 @@ Chart.prototype = {
 			this.animatorArray = this.generateAnimatorArray();
 			var self = this;
 			var vChart = function(){
-				sketch.use({element: self.canvas, context: self.context}).clear();
+				vandal.use(self.canvas).clear();
 				self.data.forEach(self.iterator.bind(self));
 				requestAnimationFrame(vChart);
 			};
@@ -168,7 +279,7 @@ Chart.prototype = {
 
 module.exports = Chart;
 
-},{"./animator":1,"./sketch":5}],4:[function(require,module,exports){
+},{"./animator":3,"vandal":1}],6:[function(require,module,exports){
 var Canvas = require('./canvas');
 var Chart = require('./chart');
 
@@ -182,66 +293,4 @@ chart.use({
 
 chart.animate('horizontal');
 
-},{"./canvas":2,"./chart":3}],5:[function(require,module,exports){
-var Sketch = function(){
-
-	this.canvas = null;
-};
-
-var methods = {
-	shape: function(type){
-		this.canvas.context.fillStyle = '#ff0033';
-		return shapes[type].bind(this);
-	}
-};
-
-var shapes = {
-	rectangle: function(x, y, w, h){
-		this.canvas.context.fillRect(x, y, w, h);
-		return this;
-	},
-	circle: function(centerX, centerY, radius){
-		this.canvas.context.beginPath();
-		this.canvas.context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-		this.canvas.context.fillStyle = '#ff0033';
-		this.canvas.context.fill();
-		return this;
-	},
-	triangle: function(start, middle, end){
-		this.canvas.context.beginPath();
-		this.canvas.context.moveTo(start.x, start.y);
-		this.canvas.context.lineTo(middle.x, middle.y);
-		this.canvas.context.lineTo(end.x, end.y);
-		this.canvas.context.fillStyle = '#ff0033';
-		this.canvas.context.fill();
-		return this;
-	},
-	text: function(txt, x, y){
-		this.canvas.context.fillStyle = '#333';
-		this.canvas.context.font = '12px sans-serif';
-		this.canvas.context.textBaseline = 'top';
-		this.canvas.context.textAlign = 'center';
-		this.canvas.context.fillText(txt, x, y);
-		return this;
-	}
-}
-
-Sketch.prototype = {
-	use: function(canvas){
-		this.canvas = canvas;
-		return this;
-	},
-
-	draw: function(type){
-		return methods[type].bind(this);
-	},
-
-	clear: function(){
-		this.canvas.context.clearRect(0, 0, this.canvas.element.width, this.canvas.element.height);
-		return this;
-	}
-};
-
-module.exports = Sketch;
-
-},{}]},{},[4]);
+},{"./canvas":4,"./chart":5}]},{},[6]);

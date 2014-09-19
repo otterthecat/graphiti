@@ -1,6 +1,6 @@
 var Animator = require('./animator');
-var Sketch = require('./sketch');
-var sketch = new Sketch();
+var Vandal = require('vandal');
+var vandal = new Vandal();
 
 var Chart = function(){
 	this.canvas = null;
@@ -59,8 +59,8 @@ Chart.prototype = {
 		var ypos = this.layout === 'width' ? (this.canvas.height - this.animatorArray[index].increase()) : this.getPosition(index);
 		var width = this.layout === 'width' ? this.calculate(this.layout) : this.animatorArray[index].increase();
 		var height = this.layout === 'width' ? this.animatorArray[index].increase() : this.calculate(this.layout);
-		sketch.draw('shape')('rectangle')(xpos, ypos, width, height);
-		sketch.draw('shape')('text')(plot, xpos + (width/2), ypos + (height/2));
+		vandal.draw('pallete')({fillStyle: '#ff0033'})('shape')('rectangle')(xpos, ypos, width, height)
+			.draw('pallete')({fillStyle: '#333', textAlign: 'center', textBaseline: 'top'})('shape')('text')(plot, xpos + (width/2), ypos + (height/2));
 	},
 
 	defaults: {
@@ -69,7 +69,7 @@ Chart.prototype = {
 			this.animatorArray = this.generateAnimatorArray();
 			var self = this;
 			var hChart = function(){
-				sketch.use({element: self.canvas, context: self.context}).clear();
+				vandal.use(self.canvas).clear();
 				self.data.forEach(self.iterator.bind(self));
 				requestAnimationFrame(hChart);
 			};
@@ -81,7 +81,7 @@ Chart.prototype = {
 			this.animatorArray = this.generateAnimatorArray();
 			var self = this;
 			var vChart = function(){
-				sketch.use({element: self.canvas, context: self.context}).clear();
+				vandal.use(self.canvas).clear();
 				self.data.forEach(self.iterator.bind(self));
 				requestAnimationFrame(vChart);
 			};
