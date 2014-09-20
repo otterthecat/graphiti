@@ -18,14 +18,11 @@ Canvas.prototype = {
 		var canvasElement = document.createElement('canvas');
 		canvasElement.width = this.attributes.width;
 		canvasElement.height = this.attributes.height;
-		return {
-			element: canvasElement,
-			context: canvasElement.getContext(this.attributes.contextType)
-		}
+		return canvasElement;
 	},
 	insert: function(){
 		var canvasObj = this.create();
-		document.querySelector(this.attributes.targetEl).appendChild(canvasObj.element);
+		document.querySelector(this.attributes.targetEl).appendChild(canvasObj);
 		return canvasObj;
 	}
 };

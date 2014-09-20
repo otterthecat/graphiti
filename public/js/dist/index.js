@@ -170,14 +170,11 @@ Canvas.prototype = {
 		var canvasElement = document.createElement('canvas');
 		canvasElement.width = this.attributes.width;
 		canvasElement.height = this.attributes.height;
-		return {
-			element: canvasElement,
-			context: canvasElement.getContext(this.attributes.contextType)
-		}
+		return canvasElement;
 	},
 	insert: function(){
 		var canvasObj = this.create();
-		document.querySelector(this.attributes.targetEl).appendChild(canvasObj.element);
+		document.querySelector(this.attributes.targetEl).appendChild(canvasObj);
 		return canvasObj;
 	}
 };
@@ -191,7 +188,6 @@ var vandal = new Vandal();
 
 var Chart = function(){
 	this.canvas = null;
-	this.context = null;
 	this.data = null;
 	this.maxWidth = 100;
 	this.maxHeight = 100;
@@ -202,8 +198,7 @@ var Chart = function(){
 Chart.prototype = {
 
 	use: function(obj){
-		this.canvas = obj.canvas.element;
-		this.context = obj.canvas.context;
+		this.canvas = obj.canvas;
 		this.data = obj.data;
 		this.maxWidth = obj.maxWidth
 		return this;

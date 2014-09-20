@@ -4,7 +4,6 @@ var vandal = new Vandal();
 
 var Chart = function(){
 	this.canvas = null;
-	this.context = null;
 	this.data = null;
 	this.maxWidth = 100;
 	this.maxHeight = 100;
@@ -15,8 +14,7 @@ var Chart = function(){
 Chart.prototype = {
 
 	use: function(obj){
-		this.canvas = obj.canvas.element;
-		this.context = obj.canvas.context;
+		this.canvas = obj.canvas;
 		this.data = obj.data;
 		this.maxWidth = obj.maxWidth
 		return this;
