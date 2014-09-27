@@ -1,6 +1,5 @@
 var Animator = require('./animator');
 var Vandal = require('vandal');
-var vandal = new Vandal();
 
 var Chart = function(){
 	this.canvas = null;
@@ -9,6 +8,7 @@ var Chart = function(){
 	this.maxHeight = 100;
 	this.type = null;
 	this.layout = 'width';
+	this.vandal = new Vandal();
 };
 
 Chart.prototype = {
@@ -16,7 +16,8 @@ Chart.prototype = {
 	use: function(obj){
 		this.canvas = obj.canvas;
 		this.data = obj.data;
-		this.maxWidth = obj.maxWidth
+		this.maxWidth = obj.maxWidth;
+		this.vandal.use(obj.canvas);
 		return this;
 	},
 
@@ -31,7 +32,7 @@ Chart.prototype = {
 
 	animate:function(fn){
 		var callback = this.defaults[fn].call(this) || fn
-		requestAnimationFrame(callback);
+		this.vandal.animate(callback);
 		return this;
 	},
 
@@ -57,33 +58,28 @@ Chart.prototype = {
 		var ypos = this.layout === 'width' ? (this.canvas.height - this.animatorArray[index].increase()) : this.getPosition(index);
 		var width = this.layout === 'width' ? this.calculate(this.layout) : this.animatorArray[index].increase();
 		var height = this.layout === 'width' ? this.animatorArray[index].increase() : this.calculate(this.layout);
-		vandal.draw('pallete')({fillStyle: '#ff0033'})('shape')('rectangle')(xpos, ypos, width, height)
+		this.vandal.draw('pallete')({fillStyle: '#ff0033'})('shape')('rectangle')(xpos, ypos, width, height)
 			.draw('pallete')({fillStyle: '#333', textAlign: 'center', textBaseline: 'top'})('shape')('text')(plot, xpos + (width/2), ypos + (height/2));
+	},
+
+	baseAnimate: function () {
+		this.animatorArray = this.generateAnimatorArray();
+		var self = this;
+		return function(v, i, s){
+			self.data.forEach(self.iterator.bind(self));
+			return i < 500;
+		};
 	},
 
 	defaults: {
 		horizontal: function(){
 			this.layout = 'width';
-			this.animatorArray = this.generateAnimatorArray();
-			var self = this;
-			var hChart = function(){
-				vandal.use(self.canvas).clear();
-				self.data.forEach(self.iterator.bind(self));
-				requestAnimationFrame(hChart);
-			};
-			return hChart;
+			return this.baseAnimate();
 		},
 
-		vertical: function(){
+		vertical: function(v, i, s){
 			this.layout = 'height';
-			this.animatorArray = this.generateAnimatorArray();
-			var self = this;
-			var vChart = function(){
-				vandal.use(self.canvas).clear();
-				self.data.forEach(self.iterator.bind(self));
-				requestAnimationFrame(vChart);
-			};
-			return vChart;
+			return this.baseAnimate();
 		}
 	}
 };
